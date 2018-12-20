@@ -1,0 +1,15 @@
+
+// Data para la función de auth 
+{"displayName" : "juan guillermo", "email" : "juan.gomez01@gmail.com"}
+
+// Data para el token
+{"token": "f7MDqWnzAcg:APA91bHMZXzGAHZ_L-pe2OrNqU7qVGy7_eU-F4acSye0wiAJdsvIZ2YLiQYkMZK1AFUdDGTF_D1wVyWGrEvZY0ewGHY31agjqzsToALZD-C6CnBMDloTmPI6VkxDxirvOiCWoSu6uWeU"}
+
+// Data para la función http
+{"data":{"topico": "NuevosPosts"}}
+
+// Data para un issue
+{"issueId" : "213456", "issueTitle" : "Error de prueba", "appInfo": "Test prueba"}
+
+// Data para analytics
+{eventDim: [{params:{foo:'bar'}, name: 'event_name', timestampMicros: Date.now() * 1000, previousTimestampMicros: Date.now() * 1000, date: '20170930',valueInUsd: 230}]}

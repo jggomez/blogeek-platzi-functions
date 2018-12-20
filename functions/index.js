@@ -1,47 +1,77 @@
 const functions = require('firebase-functions')
 const admin = require('firebase-admin')
+const usuarioController = require('./componentes/usuarios/UsuarioController.js')
+const notificacionController = require('./componentes/notificaciones/NotificacionesController.js')
+const postsController = require('./componentes/posts/PostsController.js')
+const errorController = require('./componentes/errores/ErrorController.js')
+const analiticasController = require('./componentes/analiticas/AnaliticasController.js')
+const express = require('express')
+const cors = require('cors')
 
+const app = express()
+app.use(cors())
 admin.initializeApp()
+admin.firestore().settings({ timestampsInSnapshots: true })
+
+app.post('/v1', (req, resp, next) => {
+  return postsController.enviarPostsSemana(req, resp, next)
+})
+
+app.use((error, req, res, next) => {
+  if (error) {
+    console.error(`Error en las funciones HTTPS => ${error.message}`)
+    return res.status(500).json({
+      responseCode: 500,
+      responseError: error.message
+    })
+  }
+
+  return console.error(`Error en las funciones HTTPS`)
+})
+
+// firebase functions:config:set configuration.email="XXXX" configuration.password="XXXXXX"
+// firebase functions:config:set configuration.claveapihubspot="XXXX"
+// firebase functions:config:set configuration.numcelularerror="XXXX"
+// firebase functions:config:set configuration.accountsidtwilio="XXXX"
+// firebase functions:config:set configuration.authtokentwilio="XXXX"
+exports.creacionUsuario = functions.auth
+  .user()
+  .onCreate(usuarioController.usuarioCreacionController)
+
+exports.creacionUsuarioCRM = functions.auth
+  .user()
+  .onCreate(usuarioController.creacionUsuarioCRM)
+
+exports.eliminacionUsuario = functions.auth
+  .user()
+  .onDelete(usuarioController.usuarioEliminadoController)
 
 exports.registrarTopico = functions.firestore
   .document('/tokens/{id}')
-  .onCreate(dataSnapshot => {
-    const token = dataSnapshot.data().token
-
-    const registrationTokens = [token]
-
-    return admin
-      .messaging()
-      .subscribeToTopic(registrationTokens, 'NuevosPosts')
-      .then(() => {
-        return console.log(`Adiciona correctamente al topico`)
-      })
-      .catch(error => {
-        console.error(`Error registrando al topico el token => ${error}`)
-      })
-  })
+  .onCreate(notificacionController.creacionTokenController)
 
 exports.enviarNotificacion = functions.firestore
   .document('/posts/{idPost}')
-  .onCreate(dataSnapshot => {
-    const titulo = dataSnapshot.data().titulo
-    const descripcion = dataSnapshot.data().descripcion
+  .onUpdate(postsController.actualizacionPostController)
 
-    const mensaje = {
-      data: {
-        titulo: titulo,
-        descripcion: descripcion
-      },
-      topic: 'NuevosPosts'
-    }
+exports.auditoriaPosts = functions.firestore
+  .document('/posts/{idPost}')
+  .onUpdate(postsController.auditoriaPostController)
 
-    return admin
-      .messaging()
-      .send(mensaje)
-      .then(() => {
-        return console.log(`Mensaje enviado correctamente`)
-      })
-      .catch(error => {
-        console.error(`Error enviando mensaje => ${error}`)
-      })
-  })
+exports.validarImagen = functions.storage
+  .object()
+  .onFinalize(postsController.validarImagenPostController)
+
+exports.enviarPostSemana = functions.https.onRequest(app)
+
+exports.enviarErrorNuevoAPPSMS = functions.crashlytics
+  .issue()
+  .onNew(errorController.handler)
+
+exports.enviarErrorRecurrenteAPPSMS = functions.crashlytics
+  .issue()
+  .onRegressed(errorController.handler)
+
+exports.enviarInfoCompartir = functions.analytics
+  .event('share')
+  .onLog(analiticasController.enviarCuponCompartir)
