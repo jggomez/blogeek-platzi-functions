@@ -93,6 +93,7 @@ exports.renderPost = functions.https.onRequest((req, resp) => {
     .doc(req.query.idPost)
     .get()
     .then(post => {
+      resp.set('Cache-Control', 'public, max-age=300, s-maxage=600');
       return resp.status(200).send(`<!doctype html>
         <head>
           <title>Post</title>
