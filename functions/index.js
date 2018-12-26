@@ -84,3 +84,37 @@ exports.enviarErrorRecurrenteAPPSMS = functions.crashlytics
 exports.enviarInfoCompartir = functions.analytics
   .event('share')
   .onLog(analiticasController.enviarCuponCompartir)
+
+exports.renderPost = functions.https.onRequest((req, resp) => {
+  console.log(req.query.idPost)
+  return admin
+    .firestore()
+    .collection('posts')
+    .doc(req.query.idPost)
+    .get()
+    .then(post => {
+      return resp.status(200).send(`<!doctype html>
+        <head>
+          <title>Post</title>
+        </head>
+        <body>
+            <article>
+              <div>
+                  <h2>${post.data().titulo}</h2>
+              </div>
+              <div>
+                  <iframe type="text/html" width="500" height="385" src='${
+                      post.data().videoLink}'
+                      frameborder="0"></iframe>
+              </div>
+              <div>
+                  Video
+              </div>
+              <div>
+                  <p>${post.data().descripcion}</p>
+              </div>
+            </article>
+        </body>
+      </html>`)
+    })
+})
