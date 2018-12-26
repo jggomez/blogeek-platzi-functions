@@ -1,7 +1,7 @@
 const { Notificaciones } = require('./../notificaciones/Notificaciones.js')
 const { Posts } = require('./Posts.js')
 
-exports.actualizacionPostController = (dataSnapshot, context) => {
+exports.actualizacionPostController = (dataSnapshot) => {
   const notificaciones = new Notificaciones()
 
   if (
@@ -12,7 +12,7 @@ exports.actualizacionPostController = (dataSnapshot, context) => {
       dataSnapshot.after.data().titulo,
       dataSnapshot.after.data().descripcion,
       null,
-      ""
+      ''
     )
   }
 
@@ -46,17 +46,7 @@ exports.validarImagenPostController = imagen => {
   })
 }
 
-exports.enviarPostsSemana = (req, resp, next) => {
+exports.enviarPostsSemana = (topico) => {
   const posts = new Posts()
-  const topico = req.body.data.topico
-  return posts
-    .enviarPostSemana(topico)
-    .then(result => {
-      return resp.status(200).json({
-        resultado: true
-      })
-    })
-    .catch(error => {
-      return next(new Error(error.toString()))
-    })
+  return posts.enviarPostSemana(topico)
 }

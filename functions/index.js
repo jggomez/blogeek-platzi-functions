@@ -14,7 +14,16 @@ admin.initializeApp()
 admin.firestore().settings({ timestampsInSnapshots: true })
 
 app.post('/v1', (req, resp, next) => {
-  return postsController.enviarPostsSemana(req, resp, next)
+  return postsController
+    .enviarPostsSemana(req.body.data.topico)
+    .then(() => {
+      return resp.status(200).json({
+        resultado: true
+      })
+    })
+    .catch(error => {
+      return next(new Error(error.toString()))
+    })
 })
 
 app.use((error, req, res, next) => {

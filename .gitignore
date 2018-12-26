@@ -66,3 +66,7 @@ node_modules/
 
 #Variable de entorno
 .runtimeconfig.json
+
+#Credenciales
+credenciales.json
+configTest.js

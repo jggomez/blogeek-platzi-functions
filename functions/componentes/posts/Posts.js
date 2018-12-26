@@ -44,7 +44,7 @@ class Posts {
         return client.safeSearchDetection(tempRutaArchivo)
       })
       .then(resultado => {
-        console.log(resultado[0].safeSearchAnnotation)
+        console.log(resultado[0])
         const adulto = resultado[0].safeSearchAnnotation.adult
         const medical = resultado[0].safeSearchAnnotation.medical
         const spoof = resultado[0].safeSearchAnnotation.spoof

@@ -12,4 +12,4 @@
 {"issueId" : "213456", "issueTitle" : "Error de prueba", "appInfo": "Test prueba"}
 
 // Data para analytics
-{eventDim: [{params:{foo:'bar'}, name: 'event_name', timestampMicros: Date.now() * 1000, previousTimestampMicros: Date.now() * 1000, date: '20170930',valueInUsd: 230}]}
+{eventDim: [{params:{method:'F'}, name: 'share', timestampMicros: Date.now() * 1000, previousTimestampMicros: Date.now() * 1000, date: '20170930'}]}
